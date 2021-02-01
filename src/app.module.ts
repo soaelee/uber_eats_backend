@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { RestaurantsModule } from './restaurants/restaurants.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
-import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { UsersModule } from './users/users.module';
+import { CommonModule } from './common/common.module';
+import { User } from './users/entities/user.entity';
 
 // nest가 앱의 구조를 조직하는 메타데이터를 제공
 // DON'T FORGET!! main.ts로 import되는 유일한 모듈
@@ -39,9 +40,10 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod',
-      entities: [Restaurant],
+      entities: [User],
     }),
-    RestaurantsModule,
+    UsersModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],

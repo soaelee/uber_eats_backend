@@ -7,11 +7,13 @@ import { UpdateRestaurantDto } from './dtos/update-restaurant.dto';
 @Resolver(() => Restaurant)
 export class RestaurantResolver {
   constructor(private readonly restaurantsService: RestaurantService) {}
+
   @Query(() => [Restaurant]) //graphQL방식 표현
   restaurant(@Args('veganOnly') veganOnly: boolean): Promise<Restaurant[]> {
     console.log(veganOnly);
     return this.restaurantsService.getAll();
   }
+
   @Mutation(() => Boolean)
   async createRestaurant(
     @Args('input') createRestaurantDto: CreateRestaurantDto,
@@ -24,6 +26,7 @@ export class RestaurantResolver {
       return false;
     }
   }
+
   @Mutation(() => Boolean)
   async updateRestaurant(
     @Args('input') updateRestaurantDto: UpdateRestaurantDto,
