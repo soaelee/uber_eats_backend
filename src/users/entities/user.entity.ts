@@ -19,12 +19,12 @@ enum UserRole {
 registerEnumType(UserRole, { name: 'UserRole' });
 
 @InputType({ isAbstract: true })
-@ObjectType()
-@Entity()
+@ObjectType() //for graphQL
+@Entity() //for typeOrm
 export class User extends CoreEntity {
-  @Field(() => String)
-  @Column()
-  @IsEmail()
+  @Field(() => String) //for graphQL
+  @Column() //for typeOrm
+  @IsEmail() //validation
   email: string;
 
   @Field(() => String)
@@ -37,7 +37,7 @@ export class User extends CoreEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
-  @BeforeInsert()
+  @BeforeInsert() //before createAccount, it has to hash password
   async hashPassword(): Promise<void> {
     try {
       this.password = await bcrypt.hash(this.password, 10);

@@ -40,7 +40,7 @@ export class UsersResolver {
   @Mutation(() => LoginOutput)
   async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
     try {
-      return this.usersService.login(loginInput);
+      return this.usersService.login(loginInput); //object형식이라 구조분해 쌉가능
     } catch (error) {
       console.log(error);
       return {

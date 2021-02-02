@@ -14,12 +14,9 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly users: Repository<User>,
-    private readonly config: ConfigService,
+    private readonly config: ConfigService, //this.config.get("PRIVATE_KEY")하면 키값 가져올 수 있음
     private readonly jwtService: JwtService,
-  ) {
-    console.log(this.config.get('SECRET_KEY'));
-    this.jwtService.hello();
-  }
+  ) {}
 
   async createAccount({
     email,
@@ -63,7 +60,7 @@ export class UsersService {
           error: 'Wrong password',
         };
       }
-      const token = jwt.sign({ id: user.id }, this.config.get('SECRET_KEY'));
+      const token = this.jwtService.sign(user.id);
       return {
         ok: true,
         token,

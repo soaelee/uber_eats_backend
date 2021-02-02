@@ -27,7 +27,7 @@ import { JwtModule } from './jwt/jwt.module';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
-        SECRET_KEY: Joi.string().required(),
+        PRIVATE_KEY: Joi.string().required(),
       }),
     }),
     GraphQLModule.forRoot({
@@ -36,7 +36,7 @@ import { JwtModule } from './jwt/jwt.module';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
+      port: +process.env.DB_PORT, // string => int
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
@@ -44,7 +44,9 @@ import { JwtModule } from './jwt/jwt.module';
       logging: process.env.NODE_ENV !== 'prod',
       entities: [User],
     }),
-    JwtModule.forRoot(),
+    JwtModule.forRoot({
+      privateKey: process.env.PRIVATE_KEY,
+    }),
     UsersModule,
     CommonModule,
   ],
