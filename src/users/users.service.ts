@@ -1,11 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import * as jwt from 'jsonwebtoken';
 import { Injectable } from '@nestjs/common';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput } from './dtos/login.dto';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from 'src/jwt/jwt.service';
 
 //Service must have repository in constructor
@@ -14,9 +12,9 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly users: Repository<User>,
-    private readonly config: ConfigService, //this.config.get("PRIVATE_KEY")하면 키값 가져올 수 있음
     private readonly jwtService: JwtService,
   ) {}
+  //private readonly config: ConfigService, this.config.get("PRIVATE_KEY")하면 키값 가져올 수 있음
 
   async createAccount({
     email,
@@ -71,5 +69,9 @@ export class UsersService {
         error,
       };
     }
+  }
+
+  async findById(id: number): Promise<User> {
+    return this.users.findOne({ id });
   }
 }
