@@ -69,8 +69,6 @@ export class UsersResolver {
         ok: true,
         user,
       };
-      //user는 있을 수도 있고, undefined일 수도 있다.
-      //있으면 ok가 true, 없으면 false
     } catch (error) {
       return {
         ok: false,
@@ -78,6 +76,7 @@ export class UsersResolver {
       };
     }
   }
+
   @Mutation(() => EditProfileOutput)
   @UseGuards(AuthGuard)
   async editProfile(
