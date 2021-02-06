@@ -22,29 +22,35 @@ registerEnumType(UserRole, { name: 'UserRole' });
 @ObjectType() //for graphQL
 @Entity() //for typeOrm
 export class User extends CoreEntity {
+  @Column({ unique: true }) //for typeOrm
   @Field(() => String) //for graphQL
-  @Column() //for typeOrm
   @IsEmail() //validation
   email: string;
 
+  @Column({ select: false })
   @Field(() => String)
-  @Column()
   @IsString()
   password: string;
 
-  @Field(() => UserRole)
   @Column({ type: 'enum', enum: UserRole })
+  @Field(() => UserRole)
   @IsEnum(UserRole)
   role: UserRole;
+
+  @Column({ default: false })
+  @Field(() => Boolean)
+  verified: boolean;
 
   @BeforeInsert() //before createAccount, it has to hash password
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
-    try {
-      this.password = await bcrypt.hash(this.password, 10);
-    } catch (err) {
-      console.log(err);
-      throw new InternalServerErrorException();
+    if (this.password) {
+      try {
+        this.password = await bcrypt.hash(this.password, 10);
+      } catch (e) {
+        console.log(e);
+        throw new InternalServerErrorException();
+      }
     }
   }
 
