@@ -3,30 +3,32 @@ import * as FormData from 'form-data';
 import { Inject, Injectable } from '@nestjs/common';
 import { CONFIG_OPTIONS } from 'src/common/common.constants';
 import { EmailVar, MailModuleOptions } from './mail.interface';
+
 @Injectable()
 export class MailService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
   ) {}
 
-  private async sendEmail(
+  async sendEmail(
     subject: string,
     template: string,
     to: string,
     emailVals: EmailVar[],
-  ) {
+  ): Promise<boolean> {
     const form = new FormData();
     form.append('from', `Soae from Uber Eats <mailgun@${this.options.domain}>`);
     form.append('to', to);
     form.append('subject', subject);
     form.append('template', template);
     emailVals.forEach((eVar) => form.append(`v:${eVar.key}`, eVar.value));
+    // Quite error: error가 발생해도 모듈의 진행을 멈추지 않음
     try {
-      const response = await got(
+      await got.post(
         `https://api.mailgun.net/v3/${this.options.domain}/messages`,
         {
-          method: 'POST',
           headers: {
+            //encoding
             Authorization: `Basic ${Buffer.from(
               `api:${this.options.apiKey}`,
             ).toString('base64')}`,
@@ -34,8 +36,9 @@ export class MailService {
           body: form,
         },
       );
+      return true;
     } catch (e) {
-      console.log(e);
+      return false;
     }
   }
 
