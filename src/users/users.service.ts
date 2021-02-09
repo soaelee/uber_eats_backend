@@ -84,6 +84,7 @@ export class UsersService {
     }
   }
 
+  //@mutation : userProfile
   async findById(id: number): Promise<UserProfileOutput> {
     try {
       const user = await this.users.findOneOrFail({ id });
@@ -105,6 +106,7 @@ export class UsersService {
       if (email) {
         user.email = email;
         user.verified = false;
+        // 이메일을 바꿀 경우, 기존의 verif데이터를 제거하고 새로 생성
         await this.verifications.delete({ user: { id: user.id } });
         const verification = await this.verifications.save(
           this.verifications.create({ user }),

@@ -23,6 +23,19 @@ The Backend of Uber Eats Clone
 ## Restaurant Model
 
 - name
-- category (fk)
+- category (foreign key)
 - address
 - coverImage
+
+- Create Restaunrant
+- Edit Restaurant
+- Delete Restaurant
+
+- See Categories
+- See Restaurants by Category (pagination)
+- See Restaurants (pagination)
+- See Restaurant
+
+- Create Dish
+- Edit Dish
+- Delete Dish

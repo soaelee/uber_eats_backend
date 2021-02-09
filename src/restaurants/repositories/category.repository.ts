@@ -12,6 +12,7 @@ export class CategoryRepository extends Repository<Category> {
         this.create({ slug: categorySlug, name: categoryName }),
       );
     }
+    console.log(category);
     return category;
   }
 }
