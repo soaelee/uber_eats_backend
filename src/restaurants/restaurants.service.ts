@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
-import { Repository } from 'typeorm';
+import { Like, Raw, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import {
   CreateRestaurantOutput,
@@ -20,6 +20,12 @@ import {
 } from './dtos/delete-restaurant.dto';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';
+import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
+import { RestaurantInput, RestaurantOutput } from './dtos/restaurant.dto';
+import {
+  SearchRestaurantInput,
+  SearchRestaurantOutput,
+} from './dtos/search-restaurant.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -28,6 +34,8 @@ export class RestaurantService {
     private readonly restaurants: Repository<Restaurant>,
     private readonly categories: CategoryRepository,
   ) {}
+
+  limit = 5;
 
   async createRestaurant(
     owner: User,
@@ -164,20 +172,102 @@ export class RestaurantService {
         where: {
           category,
         },
-        take: 5,
-        skip: (page - 1) * 5,
+        take: this.limit,
+        skip: (page - 1) * this.limit,
       });
-      category.restaurants = restaurants;
       const totalResults = await this.countRestaurants(category);
       return {
         ok: true,
         category,
-        totalPages: Math.ceil(totalResults / 5),
+        totalPages: Math.ceil(totalResults / this.limit),
+        restaurants,
       };
     } catch {
       return {
         ok: false,
         error: 'Count not load category',
+      };
+    }
+  }
+
+  async allRestaurants({ page }: RestaurantsInput): Promise<RestaurantsOutput> {
+    try {
+      const [restaurants, totalResults] = await this.restaurants.findAndCount({
+        take: this.limit,
+        skip: (page - 1) * this.limit,
+      });
+      if (!restaurants) {
+        return {
+          ok: false,
+          error: 'Could not fine restaurants',
+        };
+      }
+      return {
+        ok: true,
+        results: restaurants,
+        totalPages: Math.ceil(totalResults / this.limit),
+        totalResults,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not load restaurants',
+      };
+    }
+  }
+
+  async findRestaurantById({
+    restaurantId,
+  }: RestaurantInput): Promise<RestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne(restaurantId);
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: 'Restaurant not found',
+        };
+      }
+      return {
+        ok: true,
+        restaurant,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not find restaurant',
+      };
+    }
+  }
+
+  async searchRestaurantByName({
+    query,
+    page,
+  }: SearchRestaurantInput): Promise<SearchRestaurantOutput> {
+    try {
+      const [restaurants, totalResults] = await this.restaurants.findAndCount({
+        where: {
+          name: Raw((name) => `${name} ILIKE '%${query}%'`),
+          // ILIKE SQL문을 이용해 직접 db에 접근
+        },
+        take: this.limit,
+        skip: (page - 1) * this.limit,
+      });
+      if (!restaurants) {
+        return {
+          ok: false,
+          error: 'Could not find restaurant',
+        };
+      }
+      return {
+        ok: true,
+        restaurants,
+        totalResults,
+        totalPages: Math.ceil(totalResults / this.limit),
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not load restaurant',
       };
     }
   }

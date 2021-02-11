@@ -20,7 +20,7 @@ The Backend of Uber Eats Clone
 - Edit Profile (update)
 - Verify Email (find?)
 
-## Restaurant Model
+## Restaurant CRUD:
 
 - name
 - category (foreign key)
@@ -36,6 +36,17 @@ The Backend of Uber Eats Clone
 - See Restaurants (pagination)
 - See Restaurant
 
+# Dish CRUD:
+
 - Create Dish
 - Edit Dish
 - Delete Dish
+
+# Orders:
+
+- Orders CRUD
+- Orders Subscription(Owner, Customer, Delivery)
+
+# Payments:
+
+- Cron Job
