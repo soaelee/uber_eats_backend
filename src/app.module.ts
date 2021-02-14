@@ -22,6 +22,7 @@ import { Dish } from './restaurants/entities/dish.entity';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
+import { CommonModule } from './common/common.module';
 
 // nest가 앱의 구조를 조직하는 메타데이터를 제공
 // DON'T FORGET!! main.ts로 import되는 유일한 모듈
@@ -55,7 +56,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
         const TOKEN_KEY = 'x-jwt';
         return {
           token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEY],
-        }; //웹 소켈은 한번만 토큰을 보내고, 연결이 안 끊김
+        }; //웹 소켓과 http 모두 인증하기
       },
     }), //웹소켓엔 request가 없고 connection만 있기 때문에 resolver를 사용하려면 connection.context
     TypeOrmModule.forRoot({
@@ -87,6 +88,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
       domain: process.env.MAILGUN_DOMAIN_NAME,
       fromEmail: process.env.MAILGUN_FROM_EMAIL,
     }),
+    CommonModule,
     AuthModule,
     UsersModule,
     RestaurantsModule,
