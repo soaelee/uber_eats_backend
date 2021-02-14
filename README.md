@@ -47,6 +47,7 @@ The Backend of Uber Eats Clone
 - Orders CRUD
 - Orders Read : 주문 목록을 받고 ID로 주문을 찾는다
 - Orders Subscription(Owner, Customer, Delivery)
+  - subscription: resolver에서 변경사항이나 업데이트를 수신할 수 있게 함
 
 # Payments:
 
