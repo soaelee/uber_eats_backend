@@ -55,3 +55,7 @@ The Backend of Uber Eats Clone
 # Payments:
 
 - Cron Job
+  - restaurant promote 비용 지불
+  - paddle 결제 프로그램 사용
+  - 디지털 내용물만 결제 가능 (실제 물건은 X)
+  - braintree는 실제 회사가 있어야 사용
