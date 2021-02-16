@@ -9,7 +9,7 @@ import { GetOrdersInput, GetOrdersOutput } from './dtos/get-orders.dto';
 import { GetOrderInput, GetOrderOutput } from './dtos/get-order.dto';
 import { EditOrderInput, EditOrderOutput } from './dtos/edit-order.dto';
 import { Inject } from '@nestjs/common';
-import { PUB_SUB } from 'src/common/common.constants';
+import { NEW_PENDING_ORDER, PUB_SUB } from 'src/common/common.constants';
 import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => Order)
@@ -54,4 +54,21 @@ export class OrderResolver {
   ): Promise<EditOrderOutput> {
     return this.ordersService.editOrder(user, editOrderInput);
   }
+
+  @Subscription(() => Order, {
+    filter: ({ pendingOrders: { ownerId } }, _, { user }) => {
+      //console.log(payload, context); //payload는 customer, restaurant, order 정보, context는 token, user정보
+      return ownerId === user.id;
+    },
+    resolve: ({ pendingOrders: { order } }) => order,
+  })
+  @Role(['Owner'])
+  pendingOrders() {
+    // NEW_PENDING_ORDER라는 트리거의 asyncIterator를 반환
+    return this.pubSub.asyncIterator(NEW_PENDING_ORDER);
+  }
 }
+
+//subscription의 filter는 현재 listening하고 있는 사용자가
+//update알림을 받을지 말지 결정(payload, variable(알림받을), context)
+//resolve는 사용자가 받을 알림의 형태를 바꿔서 보내줌
