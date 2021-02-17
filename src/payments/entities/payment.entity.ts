@@ -8,9 +8,9 @@ import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 @ObjectType()
 @Entity()
 export class Payment extends CoreEntity {
-  @Field(() => Int)
+  @Field(() => String)
   @Column()
-  transactionId: number;
+  transactionId: string;
 
   @Field(() => User, { nullable: true })
   @ManyToOne(() => User, (user) => user.payments)
@@ -24,6 +24,7 @@ export class Payment extends CoreEntity {
   restaurant: Restaurant;
 
   @RelationId((payment: Payment) => payment.restaurant)
+  @Field(() => Int)
   restaurantId: number;
 }
 //paddle에서 transaction.id 받을 계획

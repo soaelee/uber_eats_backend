@@ -1,5 +1,5 @@
 import { Args, Mutation, Resolver, Query, Subscription } from '@nestjs/graphql';
-import { User, UserRole } from 'src/users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { CreateOrderInput, CreateOrderOutput } from './dtos/create-order.dto';
 import { Order } from './entities/order.entity';
 import { OrderService } from './orders.service';

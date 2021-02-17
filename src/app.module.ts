@@ -1,9 +1,4 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
@@ -11,7 +6,6 @@ import * as Joi from 'joi';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
-import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
@@ -25,7 +19,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
 import { CommonModule } from './common/common.module';
 import { PaymentsModule } from './payments/payments.module';
 import { Payment } from './payments/entities/payment.entity';
-
+import { ScheduleModule } from '@nestjs/schedule';
 // nest가 앱의 구조를 조직하는 메타데이터를 제공
 // DON'T FORGET!! main.ts로 import되는 유일한 모듈
 // 같은 application을 가져, 연관이 깊은 단위를 feature module로 묶을 수도 있음
@@ -83,6 +77,7 @@ import { Payment } from './payments/entities/payment.entity';
       ],
       // entity를 생성하고나면 여기서 꼭 import 해야한다!!! 꼭!!!!
     }),
+    ScheduleModule.forRoot(),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
