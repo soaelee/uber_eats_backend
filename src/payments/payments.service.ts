@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Interval } from '@nestjs/schedule';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 import {
   CreatePaymentInput,
   CreatePaymentOutput,
@@ -78,5 +79,18 @@ export class PaymentService {
         error: 'Could not load payments',
       };
     }
+  }
+
+  @Interval(2000)
+  async checkPromotedRestaurant() {
+    const restaurants = await this.restaurants.find({
+      isPromoted: true,
+      promotedUntil: LessThanOrEqual(new Date()),
+    });
+    console.log(restaurants);
+    restaurants.forEach(async (restaurant) => {
+      (restaurant.isPromoted = false), (restaurant.promotedUntil = null);
+      await this.restaurants.save(restaurant);
+    });
   }
 }
