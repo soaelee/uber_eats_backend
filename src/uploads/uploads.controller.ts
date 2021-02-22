@@ -23,10 +23,21 @@ export class UploadsController {
       },
     });
     try {
-      const upload = await new AWS.S3().createBucket({
-        Bucket: 'taeriyakki3',
-      });
-    } catch {}
+      const objectName = `${Date.now() + file.originalname}`;
+      await new AWS.S3()
+        .putObject({
+          Body: file.buffer,
+          Bucket: BUCKET_NAME,
+          Key: objectName,
+          ACL: 'public-read',
+        })
+        .promise();
+      const fileUrl = `https://${BUCKET_NAME}.s3.amazonaws.com/${objectName}`;
+      return fileUrl;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
     console.log(file);
   }
 }
